@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Для тебя</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #ff4757;
+            /* Цвет ДА */
+            --secondary: #a4b0be;
+            /* Цвет НЕТ */
+            --dark: #2f3542;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100dvh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem 1.5rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        h1 {
+            color: var(--dark);
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+            font-weight: 800;
+        }
+
+        /* Контейнер для кнопок: ставит их в ряд */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            /* Расстояние между кнопками */
+            width: 100%;
+        }
+
+        button {
+            border: none;
+            padding: 15px 0;
+            /* Высота кнопок */
+            width: 100%;
+            /* Кнопки занимают всю ширину контейнера */
+            font-size: 1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Стиль для кнопки ДА */
+        .btn-yes {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            flex: 2;
+            /* Она будет в 2 раза шире, чем НЕТ */
+        }
+
+        /* Стиль для кнопки НЕТ */
+        .btn-no {
+            background-color: var(--secondary);
+            color: white;
+            flex: 1;
+        }
+
+        .emoji {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="winSound" preload="auto">
+        <source src="win.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="failSound" preload="auto">
+        <source src="fail.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card" id="mainCard">
+        <span class="emoji">🧐</span>
+        <h1 id="question">Ты будешь со мной встречаться?</h1>
+
+        <div class="btn-container" id="buttons">
+            <button class="btn-no" onclick="handleFail()">Нет</button>
+            <button class="btn-yes" onclick="handleSuccess()">Конечно!</button>
+        </div>
+    </div>
+
+    <script>
+        function handleSuccess() {
+            // Звук
+            const audio = document.getElementById('winSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log(e));
+
+            // UI
+            updateUI("Правильный выбор! ❤️<br>Я знал.", "🥰");
+
+            // Салют
+            launchConfetti();
+        }
+
+        function handleFail() {
+            // Звук
+            const audio = document.getElementById('failSound');
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log(e));
+
+            // UI (немного драмы)
+            updateUI("Эх... 💔<br>Ну ладно.", "😢");
+        }
+
+        function updateUI(text, emoji) {
+            document.getElementById('question').innerHTML = text;
+            document.querySelector('.emoji').innerHTML = emoji;
+            // Скрываем кнопки после выбора
+            document.getElementById('buttons').style.display = 'none';
+        }
+
+        function launchConfetti() {
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff4757', '#2ed573', '#ffa502']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff4757', '#2ed573', '#ffa502']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+
+</html>
